@@ -357,3 +357,37 @@ prints a progress line every 25 titles.
 - **Never filter images by byte size.** Doing so deleted a GST decision
   flowchart and a maintenance-income formula. Gate on pixel dimensions and
   always emit a placeholder when discarding.
+
+
+## Running the pipeline
+
+The builder deliberately does **not** read `ATO_KB_ROOT` or `ATO_DIST`.
+Environment-selected output roots made it possible for a poisoned process
+environment to redirect downloads, deletes, or distribution output. In a source
+checkout, generated corpus files live in the deterministic `./corpus/`
+directory. To build at another location, place the scripts in that location's
+`build/` directory; they then use the parent directory as the corpus root.
+
+From an empty checkout, run the stages in order. Stage names are unchanged;
+the dispatcher lives at `python -m fadden <stage>`. Intermediate JSON files
+are written beside the stage modules under `fadden/`.
+
+```bash
+python -m fadden discover      # list every in-force title matching the tax keywords -> fadden/titles_all.json, fadden/titles_principal.json
+python -m fadden versions      # dedup titles and resolve each one's current version date -> fadden/acts_resolved.json
+python -m fadden download      # fetch the current EPUB for each resolved title -> ./corpus/epub/*.epub, fadden/manifest_raw.json
+python -m fadden probe13       # only if download reports no_epub: probe version history -> fadden/probe13.json
+python -m fadden retry13       # fetch the latest published compilation for those titles -> fadden/retry13_patch.json; patches manifest_raw.json in place
+python -m fadden extract       # convert each EPUB to markdown and per-section JSONL -> ./corpus/markdown/**, fadden/manifest_md.json
+python -m fadden pii_scan      # flag disciplinary-register rows naming private individuals -> fadden/pii_flagged.json
+python -m fadden pii_scan2     # second pass at a lower threshold, plus emails, phones and TFNs
+python -m fadden finalize      # write the corpus-level index and licence files -> ./corpus/sources.json, INDEX.md, README.md, LICENCE-NOTICE.md
+python -m fadden rates         # derive the rates-and-thresholds index -> ./corpus/rates/rates.jsonl, RATES.md
+python -m fadden check_current # read-only staleness check against the Register
+python -m fadden capture_register -- fadden/manifest_md.json --out build/register-capture-20260829
+python -m fadden export_live_evidence_bundles -- build/register-capture-20260829 --out build/live-evidence-20260829
+```
+
+The PII scans run before `finalize.py` because the generated corpus README
+reports the scan's totals; `finalize.py` refuses to run without
+`pii_flagged.json` rather than print counts no scan produced.

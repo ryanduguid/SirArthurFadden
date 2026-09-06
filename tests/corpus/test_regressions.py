@@ -1619,10 +1619,10 @@ class GeneratedReadmeTests(unittest.TestCase):
         finalize.py, so nothing held the sibling.  BUILD.md and check_current.py
         keep these titles out of the superseded bucket precisely because that
         bucket says re-download, at a URL that answers 404."""
-        readme = (REPO / "README.md").read_text(encoding="utf-8")
+        readme = (REPO / "docs" / "scope.md").read_text(encoding="utf-8")
         paragraphs = [" ".join(p.split()) for p in re.split(r"\n\s*\n", readme)
                       if "version_is_current" in p]
-        self.assertTrue(paragraphs, "no README paragraph cites the flag")
+        self.assertTrue(paragraphs, "no scope paragraph cites the flag")
         for paragraph in paragraphs:
             self.assertNotIn("superseded compilation", paragraph, paragraph)
             self.assertIn("no published compilation", paragraph, paragraph)
@@ -1645,8 +1645,8 @@ class ShippedIntermediateTests(unittest.TestCase):
         # The table stack landed after the same run, so it moves the same
         # figures and has to be recorded in the same breath as the volume gate.
         self.assertIn("table stack", build)
-        # The headline table is where a reader meets those figures first.
-        readme = " ".join((REPO / "README.md").read_text(encoding="utf-8").split())
+        # The dated evidence document owns the historical table and caveat.
+        readme = " ".join((REPO / "docs" / "build-evidence.md").read_text(encoding="utf-8").split())
         self.assertIn("predates the volume-gate fix", readme)
         self.assertIn("table-stack fix", readme)
 
@@ -1668,7 +1668,7 @@ class ShippedIntermediateTests(unittest.TestCase):
             re.escape(f"{len(kept):,}"),
             re.escape(f"{sum(a['sections'] for a in kept):,}"))
         corpus_words = sum(a["words"] for a in manifest)
-        for name in ("README.md", "RELEASE_NOTES.md"):
+        for name in ("docs/scope.md", "RELEASE_NOTES.md"):
             with self.subTest(document=name):
                 text = " ".join((REPO / name).read_text(encoding="utf-8").split())
                 self.assertRegex(text, subset)
@@ -1704,7 +1704,7 @@ class ShippedIntermediateTests(unittest.TestCase):
             r"\b%s titles\b.{0,80}?\b%s rows\b.{0,120}?\b%s\b.{0,40}?"
             r"nam\w* private individuals" % (
                 len(flagged), f"{rows_total:,}", f"{rows_flagged:,}"))
-        for name in ("README.md", "RELEASE_NOTES.md"):
+        for name in ("docs/scope.md", "RELEASE_NOTES.md"):
             with self.subTest(document=name):
                 text = " ".join((REPO / name).read_text(encoding="utf-8").split())
                 self.assertRegex(text, accounting)

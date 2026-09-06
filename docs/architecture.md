@@ -1,0 +1,27 @@
+## Why the code is shaped the way it is
+
+[BUILD.md](../BUILD.md) lists every trap the code exists to avoid. Each one cost a
+real defect. The short version:
+
+- **Unordered `$skip`/`$top` paging silently drops rows.** No `$orderby` meant
+  142 of 813 titles vanished, including the Tax Agent Services Act 2009.
+- **`curl` does not truncate `-o` on transport failure**, so a shared temp file
+  re-read the previous response and handed one Act another Act's compilation.
+  The JSON stages read the response off the socket now, so they carry no temp
+  file to inherit; `download.py` still uses `curl`, to a per-title path.
+- **The download endpoint answers in two shapes**, raw EPUB bytes or a JSON
+  envelope with the file base64 inside. Sniff the first byte.
+- **HTTP errors and non-EPUB responses stop the download stage.** They are not
+  evidence that a document is absent and must not be counted as `no_epub`.
+  Only a validated staged download is moved to an `.epub` path.
+- **The current version can have no document.** The Register records that an
+  amendment commenced before publishing the compilation, so the URL 404s. That
+  is not a broken download. Only an explicit null `registerId` on the current
+  version is recorded as `no_epub`; the count changes as compilations are
+  published.
+- **Acts use two Word templates; instruments use dozens.** Deciding the template
+  from the markup fails, because cosmetic classes look structural. Run the
+  structural pass, and only when it finds nothing at all re-run with the
+  bare-paragraph fallback, verified not to change a single Act row.
+- **Never filter images by byte size.** Doing so deleted a GST decision
+  flowchart and a maintenance-income formula.
