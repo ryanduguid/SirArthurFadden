@@ -291,7 +291,7 @@ class MonitorContractTests(unittest.TestCase):
 
     def test_build_docs_state_the_adapter_is_review_only_and_never_contacts_the_register(self):
         root = Path(__file__).resolve().parents[2]
-        readme = (root / "README.md").read_text(encoding="utf-8")
+        readme = (root / "docs" / "monitor-contract.md").read_text(encoding="utf-8")
         build = (root / "BUILD.md").read_text(encoding="utf-8")
 
         self.assertIn("export_monitor_contract.py", readme)
