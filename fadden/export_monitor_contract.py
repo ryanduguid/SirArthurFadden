@@ -20,22 +20,11 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
+from .corpus_paths import _DuplicateJsonMemberError, _reject_duplicate_json_members
+
 
 class ContractError(ValueError):
     """Raised when a source or observation cannot support monitor evidence."""
-
-
-class _DuplicateJsonMemberError(ValueError):
-    """Internal signal for a JSON object with ambiguous duplicate keys."""
-
-
-def _reject_duplicate_json_members(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
-    payload: dict[str, Any] = {}
-    for key, value in pairs:
-        if key in payload:
-            raise _DuplicateJsonMemberError
-        payload[key] = value
-    return payload
 
 
 COLLECTIONS = {"Act", "LegislativeInstrument", "NotifiableInstrument"}
