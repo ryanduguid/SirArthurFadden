@@ -2,7 +2,7 @@
 
 [![tests](https://github.com/ryanduguid/au-tax-legislation-corpus/actions/workflows/ci.yml/badge.svg)](https://github.com/ryanduguid/au-tax-legislation-corpus/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-4F485E.svg?labelColor=04001F)](LICENSE) [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-5C2D91.svg?logo=python&logoColor=white&labelColor=04001F)](https://www.python.org/downloads/)
 
-A **provenance-first change-review queue**, not a tax-answering system or an automatic skill updater.
+This is a provenance-first change-review queue. It does not answer tax questions and it does not update skills automatically.
 
 > Compatibility: the distribution, import package and CLI command are `tax-radar-au` / `tax_radar_au`. Releases v0.1.0 and v0.1.1, cut before this half merged into the corpus repository, shipped wheels named `au_tax_change_impact_monitor-*`; those assets and their attestations live on the archived tax-radar-au repository and are unchanged.
 
