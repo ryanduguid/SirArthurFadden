@@ -29,8 +29,9 @@ jobs:
             # only CI was the ubuntu-only verify workflow. It fails 15 tests
             # there on 8.3 short paths (RUNNER~1 against runneradmin), NTFS
             # junctions and reparse points. All pre-existing, none the radar's.
-            # Windows covers the radar half until someone fixes them.
-            tests: "tests/radar"
+            # Keep other corpus modules excluded; exercise the supported
+            # Windows-only live-evidence export boundary as well as radar.
+            tests: "tests/radar tests/corpus/test_live_evidence_bundle_export.py"
     timeout-minutes: 30
     runs-on: ${{ matrix.os }}
     steps:
