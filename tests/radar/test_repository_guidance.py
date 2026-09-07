@@ -45,10 +45,12 @@ EXPECTED_MAP = """\
 
 EXPECTED_PLATFORM_NOTE = """\
 `verify.yml` runs compilation and the corpus unittest suite on Ubuntu. `ci.yml` runs the
-full locked pytest suite on Ubuntu for Python 3.10-3.13, but its Windows 3.12 matrix runs
-only `tests/radar`. The workflow documents pre-existing full-corpus Windows failures around
-8.3 short paths, junctions and reparse points; do not describe a local Windows full-suite
-failure in those paths as a radar regression without proving it.
+full locked pytest suite on Ubuntu for Python 3.10-3.13. Its Windows 3.12 matrix runs
+`tests/radar` and `tests/corpus/test_live_evidence_bundle_export.py` so the supported
+live-evidence export boundary is exercised. Other corpus modules remain excluded because
+of pre-existing Windows failures around 8.3 short paths, junctions and reparse points;
+do not describe a local Windows full-suite failure in those paths as a radar regression
+without proving it.
 
 The fenced list records the unique single-line commands. The multiline package-smoke gate
 is explained and matched semantically below without duplicating its shell body.
