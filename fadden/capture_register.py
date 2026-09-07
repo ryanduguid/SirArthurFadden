@@ -27,7 +27,14 @@ from pathlib import Path
 from typing import Any, Protocol, Sequence
 from urllib.parse import quote, urlencode, urlsplit
 
-from .corpus_paths import register_id as validate_register_id
+from .corpus_paths import (
+    _DuplicateJsonMemberError,
+    _details_are_reparse_point,
+    _path_is_junction,
+    _reject_duplicate_json_members,
+    _same_location,
+    register_id as validate_register_id,
+)
 from .http_fetch import TIMEOUT, UA
 
 
@@ -116,19 +123,6 @@ FAILURE_CATEGORIES = {
 
 class CaptureRegisterError(ValueError):
     """Raised when a complete, self-consistent capture cannot be produced."""
-
-
-class _DuplicateJsonMemberError(ValueError):
-    """Internal signal for an ambiguous JSON object at any depth."""
-
-
-def _reject_duplicate_json_members(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
-    result: dict[str, Any] = {}
-    for key, value in pairs:
-        if key in result:
-            raise _DuplicateJsonMemberError
-        result[key] = value
-    return result
 
 
 @dataclass(frozen=True)
@@ -323,17 +317,6 @@ def _utc_timestamp(value: Any, field: str) -> str:
     except ValueError as exc:
         raise CaptureRegisterError(f"{field} must be a UTC timestamp ending in Z.") from exc
     return text
-
-
-def _details_are_reparse_point(details: os.stat_result) -> bool:
-    return bool(
-        getattr(details, "st_file_attributes", 0)
-        & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
-    )
-
-
-def _path_is_junction(path: Path) -> bool:
-    return getattr(os.path, "isjunction", lambda _path: False)(path)
 
 
 def _require_ordinary_directory(path: Path, label: str) -> None:
@@ -1295,10 +1278,6 @@ def _require_absent_destination(path: Path) -> None:
     except OSError as exc:
         raise CaptureRegisterError("capture destination could not be inspected.") from exc
     raise CaptureRegisterError("capture destination must not exist.")
-
-
-def _same_location(left: Path, right: Path) -> bool:
-    return os.path.normcase(os.path.realpath(left)) == os.path.normcase(os.path.realpath(right))
 
 
 def _preflight_output(output: Path, manifest: Path) -> bool:

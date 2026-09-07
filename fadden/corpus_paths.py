@@ -15,7 +15,7 @@ import os
 import re
 import stat
 from pathlib import Path
-from typing import Union
+from typing import Any, Union
 
 
 _REGISTER_ID = re.compile(r"[A-Z]\d{4}[A-Z]\d{5}\Z")
@@ -31,6 +31,38 @@ def is_reparse_point(path: PathPart) -> bool:
     """
     attributes = getattr(os.lstat(os.fspath(path)), "st_file_attributes", 0)
     return bool(attributes & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400))
+
+
+def _details_are_reparse_point(details: os.stat_result) -> bool:
+    return bool(
+        getattr(details, "st_file_attributes", 0)
+        & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
+    )
+
+
+def _path_is_junction(path: Path) -> bool:
+    return getattr(os.path, "isjunction", lambda _path: False)(path)
+
+
+def _absolute(path: str | Path) -> Path:
+    return Path(os.path.abspath(os.fspath(path)))
+
+
+def _same_location(left: Path, right: Path) -> bool:
+    return os.path.normcase(os.path.realpath(left)) == os.path.normcase(os.path.realpath(right))
+
+
+class _DuplicateJsonMemberError(ValueError):
+    """Internal signal for an ambiguous JSON object at any depth."""
+
+
+def _reject_duplicate_json_members(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise _DuplicateJsonMemberError
+        result[key] = value
+    return result
 
 
 def corpus_root(script_file: PathPart) -> str:

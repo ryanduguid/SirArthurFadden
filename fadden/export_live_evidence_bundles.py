@@ -6,7 +6,6 @@ import argparse
 import base64
 import ctypes
 import datetime as dt
-import hashlib
 import json
 import os
 import re
@@ -24,9 +23,17 @@ from .capture_register import (
     ODATA_CONTEXT,
     ROW_FIELDS,
     CaptureRegisterError,
+    _sha256_id,
     validate_capture_graph,
 )
-from .corpus_paths import register_id as _validate_register_id
+from .corpus_paths import (
+    _DuplicateJsonMemberError,
+    _absolute,
+    _details_are_reparse_point,
+    _path_is_junction,
+    _reject_duplicate_json_members,
+    register_id as _validate_register_id,
+)
 
 
 _SHA256_ID = re.compile(r"sha256:[0-9a-f]{64}\Z")
@@ -124,30 +131,6 @@ class LiveEvidenceExport:
 
 class LiveEvidenceBundleError(ValueError):
     pass
-
-
-class _DuplicateJsonMemberError(ValueError):
-    """Internal signal for ambiguous source JSON."""
-
-
-def _reject_duplicate_json_members(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
-    result: dict[str, Any] = {}
-    for key, value in pairs:
-        if key in result:
-            raise _DuplicateJsonMemberError
-        result[key] = value
-    return result
-
-
-def _details_are_reparse_point(details: os.stat_result) -> bool:
-    return bool(
-        getattr(details, "st_file_attributes", 0)
-        & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
-    )
-
-
-def _path_is_junction(path: Path) -> bool:
-    return getattr(os.path, "isjunction", lambda _path: False)(path)
 
 
 def _same_regular_file_identity(expected: os.stat_result, observed: os.stat_result) -> bool:
@@ -640,10 +623,6 @@ def _json_bytes(value: Any) -> bytes:
     )
 
 
-def _sha256_id(content: bytes) -> str:
-    return f"sha256:{hashlib.sha256(content).hexdigest()}"
-
-
 def _read_json(path: Path, label: str) -> tuple[bytes, dict[str, Any]]:
     try:
         content = path.read_bytes()
@@ -891,10 +870,6 @@ def _candidate_bundle(
         ),
         "primary_response_base64": base64.b64encode(response).decode("ascii"),
     }
-
-
-def _absolute(path: str | Path) -> Path:
-    return Path(os.path.abspath(os.fspath(path)))
 
 
 def _require_absent_destination(path: Path) -> None:

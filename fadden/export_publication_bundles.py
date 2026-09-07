@@ -15,6 +15,7 @@ from typing import Any, Sequence
 from urllib.parse import urlsplit
 
 from fadden import export_monitor_contract as monitor_contract
+from fadden.corpus_paths import _absolute, _same_location
 from tax_radar_au.errors import MonitorError
 from tax_radar_au.util import SourceSnapshot, load_json
 
@@ -360,10 +361,6 @@ def bundle_bytes(bundle: dict[str, Any]) -> bytes:
     return (json.dumps(bundle, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
 
 
-def _absolute(path: str | Path) -> Path:
-    return Path(os.path.abspath(os.fspath(path)))
-
-
 def _is_reparse_point(details: os.stat_result) -> bool:
     return bool(
         getattr(details, "st_file_attributes", 0)
@@ -447,10 +444,6 @@ def _require_absent(path: Path) -> None:
             f"publication bundle destination cannot be inspected: {path} ({exc})."
         ) from exc
     raise PublicationBundleError(f"publication bundle destination must not exist: {path}.")
-
-
-def _same_location(left: Path, right: Path) -> bool:
-    return os.path.normcase(os.path.realpath(left)) == os.path.normcase(os.path.realpath(right))
 
 
 def _write_bundle(path: Path, content: bytes) -> None:
