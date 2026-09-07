@@ -1,3 +1,26 @@
+# v0.1.4
+
+This is a release of the corpus builder, not a prebuilt legislation corpus.
+
+Changes since `v0.1.3`:
+
+- The release workflow calls the shared release-policy archive workflow,
+  pinned to a commit reachable from that repository's `main`
+  (`99a6314`), after two repoints that followed release-policy's history
+  rewrite. Dependabot no longer proposes bumps to that pin; the pin moves
+  only through a reviewed change. `setup-uv` is pinned by commit, the
+  evidence publisher runs without a cache, and every workflow carries a
+  concurrency group and a job timeout.
+- A repealed row that the Register still lists as current is recorded as no
+  longer in force; `C2004A00982` is re-resolved against current Register
+  metadata; `observed_at` is read without PowerShell datetime coercion; the
+  distribution figures and stale documentation are corrected, raw HTML in
+  radar Markdown is escaped, and the affected test paths are repaired.
+- Documentation states the source-only package lifecycle, names GitHub
+  Releases as the canonical release history and says what a release carries,
+  adds cross-runtime contributor guidance for the corpus, and leads with a
+  synthetic change-review export.
+
 # v0.1.3
 
 This is a release of the corpus builder, not a prebuilt legislation corpus.
