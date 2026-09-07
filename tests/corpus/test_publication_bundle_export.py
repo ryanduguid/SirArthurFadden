@@ -19,6 +19,10 @@ FIXTURES = Path(__file__).parent / "fixtures" / "publication"
 SOURCES = FIXTURES / "sample-sources.json"
 FACTS = FIXTURES / "sample-observation-facts-v3.json"
 PAYLOAD = FIXTURES / "sample-evidence-payload.json"
+# The exporter stamps bundles with the repository VERSION file, so the expected
+# bundles are built with the same value rather than a literal that a release
+# bump would leave behind.
+PRODUCER_VERSION = exporter.VERSION_PATH.read_text(encoding="utf-8").strip()
 
 
 class PublicationBundleExportTests(unittest.TestCase):
@@ -39,7 +43,7 @@ class PublicationBundleExportTests(unittest.TestCase):
             observation,
             baseline_sha256=hashlib.sha256(source_bytes).hexdigest(),
             observation_facts_sha256=hashlib.sha256(facts_bytes).hexdigest(),
-            producer_version="0.1.3",
+            producer_version=PRODUCER_VERSION,
         )
 
     def _build_one_bundle(self) -> dict:
@@ -49,7 +53,7 @@ class PublicationBundleExportTests(unittest.TestCase):
             observation,
             baseline_sha256=hashlib.sha256(source_bytes).hexdigest(),
             observation_facts_sha256=hashlib.sha256(facts_bytes).hexdigest(),
-            producer_version="0.1.3",
+            producer_version=PRODUCER_VERSION,
         )
         self.assertEqual(len(bundles), 1)
         return bundles[0]
