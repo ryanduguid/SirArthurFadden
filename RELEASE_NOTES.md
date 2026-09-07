@@ -1,9 +1,18 @@
-# v0.1.4
+# v0.1.5
 
 This is a release of the corpus builder, not a prebuilt legislation corpus.
 
+The `v0.1.4` tag was pushed on 7 September 2026 and its release preflight
+failed before anything was published, so that tag carries no GitHub release.
+A pushed tag is never moved, so `v0.1.5` is the same tree plus the fix.
+
 Changes since `v0.1.3`:
 
+- The release-policy preflight runs unittest discovery over the whole `tests`
+  tree on a runner without pytest, and since the tax-radar-au merge that tree
+  holds a pytest-only radar suite. `tests/radar/__init__.py` now withholds
+  that package from unittest discovery, and a corpus test re-runs the
+  preflight discovery with pytest hidden so it stays that way.
 - The release workflow calls the shared release-policy archive workflow,
   pinned to a commit reachable from that repository's `main`
   (`99a6314`), after two repoints that followed release-policy's history

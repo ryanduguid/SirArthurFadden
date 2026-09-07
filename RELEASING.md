@@ -41,6 +41,12 @@ for those two tags because the release attestations reference commit ids the
 rewrite orphaned. The first release cut from the current history restores the
 full verification story end to end.
 
+Historical caveat: the `v0.1.4` tag exists with no release. Its preflight
+failed because the policy's `python -B -m unittest discover -s tests` imported
+the pytest-only radar suite on a runner without pytest, and the release job
+never ran. A pushed tag is never moved, so the fix shipped as `v0.1.5` from
+the same tree. Do not describe `v0.1.4` as a release.
+
 Since the release moved to the shared release-policy workflow, the
 attestations are signed by that reusable workflow, so `gh attestation verify`
 needs `--signer-repo ryanduguid/release-policy` (or `--owner ryanduguid`);
@@ -54,7 +60,7 @@ intended version changes and bind verification to the exact source and policy
 commit:
 
 ```bash
-tag=v0.1.4
+tag=v0.1.5
 repo=ryanduguid/au-tax-legislation-corpus
 release_commit="$(git ls-remote "https://github.com/$repo.git" "refs/tags/$tag^{}" | cut -f1)"
 test -n "$release_commit"
