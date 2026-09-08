@@ -20,9 +20,10 @@ ROOT = corpus_root(__file__)
 
 
 def main():
-    with open(child(ROOT, "sources.json"), encoding="utf-8") as source:
-        src = json.load(source)
-    byid = {t["register_id"]: t for t in src["titles"]}
+    scratch = os.path.dirname(os.path.abspath(__file__))
+    with open(os.path.join(scratch, "manifest_md.json"), encoding="utf-8") as source:
+        titles = json.load(source)
+    byid = {t["id"]: t for t in titles}
     flagged = []
 
     markdown_root = child(ROOT, "markdown")

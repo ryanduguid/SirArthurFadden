@@ -1944,7 +1944,7 @@ class PiiNameGateTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     patterns.load_contact_allowlist(policy)
 
-    def test_pii_scan_flags_a_register_written_in_capitals(self):
+    def test_pii_scan_flags_capitalised_register_before_finalization(self):
         with tempfile.TemporaryDirectory() as tmp:
             base = Path(tmp)
             build = base / "build"
@@ -1953,13 +1953,14 @@ class PiiNameGateTests(unittest.TestCase):
                 shutil.copy2(stage_file(name), build / name)
 
             titles = [
-                {"register_id": "F2026N00001", "name": "All Caps Register",
+                {"id": "F2026N00001", "name": "All Caps Register",
                  "collection": "NotifiableInstrument"},
-                {"register_id": "C2004A00001", "name": "Ordinary Tax Act",
+                {"id": "C2004A00001", "name": "Ordinary Tax Act",
                  "collection": "Act"},
             ]
-            (base / "sources.json").write_text(
-                json.dumps({"titles": titles}), encoding="utf-8")
+            # The scan precedes finalize, so sources.json does not exist yet.
+            (build / "manifest_md.json").write_text(
+                json.dumps(titles), encoding="utf-8")
             rows = {
                 "F2026N00001": {"row_id": "F2026N00001-1",
                                 "text": self.ALL_CAPS_ROW},
@@ -1979,6 +1980,8 @@ class PiiNameGateTests(unittest.TestCase):
             flagged = json.loads(
                 (build / "pii_flagged.json").read_text(encoding="utf-8"))
             self.assertEqual([f["register_id"] for f in flagged], ["F2026N00001"])
+            self.assertEqual(flagged[0]["name"], "All Caps Register")
+            self.assertEqual(flagged[0]["collection"], "NotifiableInstrument")
             self.assertGreaterEqual(flagged[0]["names_est"], 3)
 
     def test_second_scan_does_not_copy_contact_identifiers_into_logs(self):
