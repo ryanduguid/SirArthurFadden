@@ -38,7 +38,7 @@ def fetch_json(url, tries=3, delay=6):
     below still exists: the API also returns 200 with an error document.
     """
     request = urllib.request.Request(url, headers={"User-Agent": UA})
-    for _ in range(tries):
+    for attempt in range(tries):
         try:
             with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
                 document = json.load(response)
@@ -47,5 +47,6 @@ def fetch_json(url, tries=3, delay=6):
         except (urllib.error.URLError, http.client.HTTPException, OSError,
                 UnicodeDecodeError, json.JSONDecodeError):
             pass
-        time.sleep(delay)
+        if attempt + 1 < tries:
+            time.sleep(delay)
     return None
