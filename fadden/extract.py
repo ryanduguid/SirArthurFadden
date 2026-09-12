@@ -840,10 +840,9 @@ def main(retrieved=None):
         a = dict(a, id=rid)
         # Most EPUBs were fetched on an earlier day and served from cache, so
         # the build date would misstate when this Act was actually obtained.
-        fetched = retrieved or datetime.date.fromtimestamp(os.path.getmtime(src)).isoformat()
-        attr = attribution(fetched)
-        meta = dict(a, retrieved=fetched)
         try:
+            fetched = retrieved or datetime.date.fromtimestamp(os.path.getmtime(src)).isoformat()
+            meta = dict(a, retrieved=fetched)
             blocks = epub_blocks(src)
             md, sections, endnotes, long_title = to_markdown(blocks, meta)
             # Instruments come from dozens of one-off Word templates. When none
@@ -870,6 +869,7 @@ def main(retrieved=None):
             continue
 
         d = child(md_root, a["id"])
+        attr = attribution(fetched)
         os.makedirs(d, exist_ok=True)
         with open(child(d, a["id"] + ".md"), "w", encoding="utf-8") as f:
             f.write(md)

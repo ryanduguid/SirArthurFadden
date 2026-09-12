@@ -274,6 +274,23 @@ class ExtractPipelineTests(unittest.TestCase):
 
     REGISTER_ID = "F2025L00281"
 
+    def test_missing_epub_records_failure_and_processes_later_titles(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            build, _ = self._fixture(base)
+            path = build / "manifest_raw.json"
+            manifest = json.loads(path.read_text(encoding="utf-8"))
+            missing = dict(manifest[0], id="F2025L00280", epub="F2025L00280.epub")
+            path.write_text(json.dumps([missing, *manifest]), encoding="utf-8")
+            extract = load_module("extract_missing_epub", build / "extract.py")
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                with self.assertRaisesRegex(RuntimeError, "refusing to write manifest_md"):
+                    extract.main()
+            self.assertIn("FAIL F2025L00280", output.getvalue())
+            self.assertTrue((base / "markdown" / self.REGISTER_ID / "sections.jsonl").is_file())
+            self.assertFalse((build / "manifest_md.json").exists())
+
     def _fixture(self, tmp_path):
         build = tmp_path / "build"
         build.mkdir()

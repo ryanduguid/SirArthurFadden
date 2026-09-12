@@ -1116,6 +1116,28 @@ def test_queue_writes_and_human_decision_is_structurally_valid(tmp_path: Path) -
     assert validation["mode"] == "synthetic"
 
 
+def test_interrupted_pair_write_cannot_validate_against_old_markdown(monkeypatch, tmp_path):
+    output = tmp_path / "queue"
+    paths = write_queue(_queue(), output)
+    replacement = _queue()
+    replacement["baseline"]["source"] = "Replacement source"
+    replacement["queue_digest"] = _expected_queue_digest(replacement)
+    swap = persist_module._swap_into_place
+
+    def interrupt_before_markdown(staged, destination):
+        if destination.suffix == ".md":
+            raise KeyboardInterrupt("simulated process termination")
+        return swap(staged, destination)
+
+    monkeypatch.setattr(persist_module, "_swap_into_place", interrupt_before_markdown)
+    with pytest.raises(KeyboardInterrupt):
+        write_queue(replacement, output)
+    decision = tmp_path / "decision.json"
+    decision.write_text(json.dumps(_matching_decision(replacement)), encoding="utf-8")
+    with pytest.raises(MonitorError, match="Markdown"):
+        validate_review(queue_path=paths["json"], decision_path=decision)
+
+
 def test_second_queue_commit_failure_restores_the_previous_pair(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
