@@ -37,7 +37,7 @@ from .corpus_paths import (
 from .corpus_paths import (
     register_id as validate_register_id,
 )
-from .http_fetch import TIMEOUT, UA
+from .http_fetch import RETRY_DELAY, TIMEOUT, TRIES, UA, attempts
 
 SOURCE_API = "https://api.prod.legislation.gov.au/v1/"
 REGISTER_SITE = "https://www.legislation.gov.au"
@@ -68,8 +68,8 @@ RETAINED_HEADER_NAMES = {
 }
 MAX_RESPONSE_BYTES = 256 * 1024
 MAX_MANIFEST_BYTES = 8 * 1024 * 1024
-MAX_ATTEMPTS = 3
-RETRY_DELAY_SECONDS = 6.0
+MAX_ATTEMPTS = TRIES
+RETRY_DELAY_SECONDS = RETRY_DELAY
 REQUEST_DELAY_SECONDS = 1.5
 SHA256_ID = re.compile(r"sha256:[0-9a-f]{64}\Z")
 EVIDENCE_NAME = re.compile(r"sha256-([0-9a-f]{64})\.json\Z")
@@ -230,7 +230,9 @@ class _HttpsRegisterSession:
 
     def get(self, url: str) -> RegisterExchange:
         request = self._request(url)
-        for attempt in range(1, MAX_ATTEMPTS + 1):
+        # The retry wait lives in http_fetch.attempts, ahead of _pace, so the
+        # 1.5-second spacing is already satisfied by a 6-second retry wait.
+        for attempt in attempts(MAX_ATTEMPTS, RETRY_DELAY_SECONDS):
             self._pace()
             try:
                 with self._opener.open(request, timeout=TIMEOUT) as response:
@@ -246,7 +248,6 @@ class _HttpsRegisterSession:
                 headers = _selected_response_headers(exc.headers)
                 exc.close()
                 if _retryable_status(status) and attempt < MAX_ATTEMPTS:
-                    time.sleep(RETRY_DELAY_SECONDS)
                     continue
                 return RegisterExchange(
                     checked_at=_utc_now(),
@@ -257,7 +258,6 @@ class _HttpsRegisterSession:
                 )
             except (urllib.error.URLError, http.client.HTTPException, OSError):
                 if attempt < MAX_ATTEMPTS:
-                    time.sleep(RETRY_DELAY_SECONDS)
                     continue
                 return RegisterExchange(
                     checked_at=_utc_now(),
@@ -269,7 +269,6 @@ class _HttpsRegisterSession:
                 )
 
             if _retryable_status(status) and attempt < MAX_ATTEMPTS:
-                time.sleep(RETRY_DELAY_SECONDS)
                 continue
             return RegisterExchange(
                 checked_at=_utc_now(),
