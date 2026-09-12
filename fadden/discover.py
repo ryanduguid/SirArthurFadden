@@ -1,7 +1,6 @@
-"""Stage 1: discover in-force principal tax Acts, and probe the 'latest' download alias."""
+"""Stage 1: discover in-force principal tax Acts by keyword and collection."""
 import json
 import os
-import subprocess
 import time
 import urllib.parse
 
@@ -72,19 +71,6 @@ def main():
     print("\nsample principal Acts:")
     for x in sorted(principal, key=lambda r: r["name"])[:15]:
         print("   %-12s %s" % (x["id"], x["name"][:80]))
-
-    # Probe whether the /latest/ download alias works, which would remove
-    # the need for a per-Act version lookup.
-    print("\n--- probing download URL aliases on ITAA 1997 (C2004A05138)")
-    for shape in ["latest/text/original/epub",
-                  "latest/downloads/epub",
-                  "latest/epub"]:
-        u = "https://www.legislation.gov.au/C2004A05138/" + shape
-        p = subprocess.run(["curl", "-sIL", "--max-time", "60", "-o", os.path.join(SCRATCH, "_h.txt"),
-                            "-w", "%{http_code} %{content_type} %{size_download}", u],
-                           capture_output=True, text=True)
-        print("   %-32s -> %s" % (shape, p.stdout.strip()))
-        time.sleep(10)
 
 
 if __name__ == "__main__":
