@@ -25,3 +25,17 @@ real defect. The short version:
   bare-paragraph fallback, verified not to change a single Act row.
 - **Never filter images by byte size.** Doing so deleted a GST decision
   flowchart and a maintenance-income formula.
+- **The same-named helpers in the evidence stages are not duplicates.**
+  `capture_register.py`, `export_live_evidence_bundles.py`,
+  `export_publication_bundles.py` and `export_monitor_contract.py` share
+  fourteen private helper names, and every one of them has drifted. None of the
+  pairs is byte-identical, so none belongs in `corpus_paths.py`. Some carry a
+  different rule, not just a different error class: the live-evidence
+  `_json_bytes` sets `allow_nan=False`, its `_write_new` creates at mode 0o600
+  through `os.open` rather than `open(path, "xb")`, and its
+  `_same_regular_file_identity` also rejects a file with more than one link.
+  `_required_text` has three incompatible definitions: capture strips before
+  validating and rejects control characters, the live-evidence version rejects
+  untrimmed input but allows control characters, and the publication version
+  rejects both. Lifting any of them silently rewrites one caller's contract.
+  Diff a pair before assuming the repetition is accidental.
