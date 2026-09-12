@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-from pathlib import Path
-from pathlib import PurePosixPath
 import ast
 import re
-
+from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parents[2]
 

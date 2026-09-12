@@ -7,6 +7,7 @@ from pathlib import Path
 
 from .errors import MonitorError
 
+
 def _remove_quietly(path: Path) -> None:
     try:
         path.unlink()

@@ -1,5 +1,9 @@
 """Stage 1: discover in-force principal tax Acts, and probe the 'latest' download alias."""
-import json, time, urllib.parse, subprocess, os
+import json
+import os
+import subprocess
+import time
+import urllib.parse
 
 from http_fetch import fetch_json
 

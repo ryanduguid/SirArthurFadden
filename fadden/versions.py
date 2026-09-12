@@ -1,5 +1,8 @@
 """Stage 2: dedup titles properly, then resolve each Act's current version date."""
-import json, time, urllib.parse, os
+import json
+import os
+import time
+import urllib.parse
 
 from http_fetch import fetch_json
 

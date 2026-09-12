@@ -9,7 +9,14 @@ in advance:
     useful metadata (registerId, fileName, sizeInBytes, isAuthorised).
 Large raw transfers also drop mid-stream, so those get a resumed retry.
 """
-import base64, binascii, json, os, shutil, subprocess, time, zipfile
+import base64
+import binascii
+import json
+import os
+import shutil
+import subprocess
+import time
+import zipfile
 
 from corpus_paths import child, corpus_root, register_id
 

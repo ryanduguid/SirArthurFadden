@@ -26,7 +26,6 @@ from fadden.export_publication_bundles import (
     export_publication_bundles,
 )
 
-
 CURRENT_URL = (
     "https://api.prod.legislation.gov.au/v1/versions?%24top=1&"
     "%24filter=titleId%20eq%20%27C2004A00467%27%20and%20isCurrent%20eq%20true&"

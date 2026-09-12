@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import contextlib
-import io
 import importlib
+import io
 import unittest
 from unittest import mock
 

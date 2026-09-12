@@ -11,7 +11,9 @@ ordinary legislation constantly, so a bare name test would flag the whole
 corpus; the registration number is what separates a disciplinary register from
 a statute.
 """
-import glob, json, os
+import glob
+import json
+import os
 
 from corpus_paths import child, corpus_root, register_id
 from pii_patterns import private_person_registration_details

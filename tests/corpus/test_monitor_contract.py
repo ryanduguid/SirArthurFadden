@@ -8,9 +8,8 @@ monitor at runtime.
 
 from __future__ import annotations
 
-from contextlib import contextmanager
-import json
 import importlib
+import json
 import os
 import stat
 import sys
@@ -18,8 +17,9 @@ import tempfile
 import threading
 import time
 import unittest
-from unittest import mock
+from contextlib import contextmanager
 from pathlib import Path
+from unittest import mock
 
 from fadden import export_monitor_contract as contract
 

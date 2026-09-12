@@ -18,7 +18,12 @@ around the dash.
 Table cells wrap their content in <p>, so cell text must be accumulated in a
 buffer that survives a nested paragraph.
 """
-import datetime, json, os, re, sys, zipfile
+import datetime
+import json
+import os
+import re
+import sys
+import zipfile
 from html.parser import HTMLParser
 
 from corpus_paths import child, corpus_root, register_id
@@ -383,7 +388,7 @@ def table_split(body, name):
     # repeat their lead-in sentence above every table: 36 prose lines against
     # 32 tables reads as a narrative document, when the prose is the same
     # sentence thirty-two times. By word mass the tables win nine to one.
-    t_words = sum(len(l.split()) for t in tables for l in t)
+    t_words = sum(len(line.split()) for t in tables for line in t)
     p_words = sum(len(s.split()) for k, seg in segs if k == "p" for s in seg)
     if t_words < 2 * p_words:
         return []

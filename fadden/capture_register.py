@@ -28,15 +28,16 @@ from typing import Any, Protocol, Sequence
 from urllib.parse import quote, urlencode, urlsplit
 
 from .corpus_paths import (
-    _DuplicateJsonMemberError,
     _details_are_reparse_point,
+    _DuplicateJsonMemberError,
     _path_is_junction,
     _reject_duplicate_json_members,
     _same_location,
+)
+from .corpus_paths import (
     register_id as validate_register_id,
 )
 from .http_fetch import TIMEOUT, UA
-
 
 SOURCE_API = "https://api.prod.legislation.gov.au/v1/"
 REGISTER_SITE = "https://www.legislation.gov.au"
@@ -648,7 +649,7 @@ def _evaluate_exchange(
     except (AttributeError, CaptureRegisterError):
         checked_at = "1970-01-01T00:00:00Z"
         headers = {}
-        problem = "INVALID_EXCHANGE"
+        problem: str | None = "INVALID_EXCHANGE"
     else:
         problem = None
 

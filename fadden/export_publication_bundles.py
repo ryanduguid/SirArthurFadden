@@ -14,10 +14,11 @@ from pathlib import Path
 from typing import Any, Sequence
 from urllib.parse import urlsplit
 
-from fadden import export_monitor_contract as monitor_contract
-from fadden.corpus_paths import _absolute, _same_location
 from tax_radar_au.errors import MonitorError
 from tax_radar_au.util import SourceSnapshot, load_json
+
+from fadden import export_monitor_contract as monitor_contract
+from fadden.corpus_paths import _absolute, _same_location
 
 
 class PublicationBundleError(ValueError):

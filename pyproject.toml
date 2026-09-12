@@ -45,12 +45,24 @@ line-length = 100
 src = ["tax_radar_au", "fadden", "tools", "tests"]
 
 [tool.ruff.lint]
-# First-enablement set: syntax and undefined-name errors only (E9, F82).
-# Keep Decimal("10.00") money literals and existing import layout.
-select = ["E9", "F82"]
+# Whole-repository set: import layout (E4, I), statement-level mistakes (E7),
+# syntax errors (E9) and the full pyflakes set (F).
+# Keep Decimal("10.00") money literals; E501 stays off, so long emitted-format
+# string literals in the corpus stages are untouched.
+select = ["E4", "E7", "E9", "F", "I"]
 
 [tool.mypy]
 python_version = "3.10"
-packages = ["tax_radar_au"]
+packages = ["tax_radar_au", "fadden"]
 ignore_missing_imports = true
 pretty = true
+
+# The live-evidence exporter's official-output transaction is Windows-only and
+# reaches it through ctypes.WinDLL and msvcrt. Those names do not exist on the
+# platform mypy assumes in CI (ubuntu), so every use reports attr-defined.
+# Only that error code is disabled, and only for this module: its other checks,
+# and every check in the rest of fadden, still run. Replacing the ctypes
+# traversal is a separate, security-adjacent change.
+[[tool.mypy.overrides]]
+module = "fadden.export_live_evidence_bundles"
+disable_error_code = ["attr-defined"]

@@ -19,7 +19,6 @@ from fadden.export_live_evidence_bundles import (
     export_live_evidence_bundles,
 )
 
-
 WINDOWS_ONLY_EXPORT = unittest.skipUnless(
     os.name == "nt",
     "identity-bound live evidence publication is supported only on Windows",

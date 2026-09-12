@@ -7,7 +7,6 @@ import sys
 from pathlib import Path
 
 import pytest
-
 from tax_radar_au.cli import main
 from tax_radar_au.util import sample_path
 

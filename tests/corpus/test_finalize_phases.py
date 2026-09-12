@@ -7,11 +7,10 @@ import hashlib
 import importlib.util
 import io
 import json
-from pathlib import Path
 import sys
 import tempfile
 import unittest
-
+from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 STAGE = REPO / "fadden"

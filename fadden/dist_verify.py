@@ -5,13 +5,17 @@ build script that made it: no personal names, no image bytes, every row parses,
 every title listed in sources.json is actually present, and nothing links to a
 title that was removed.
 """
-import collections, json, os, sys
+import collections
+import json
+import os
+import sys
 
-from corpus_paths import (child, corpus_root, is_reparse_point, register_id,
-                          reject_symlinks)
-from pii_patterns import (has_private_person_registration_pair,
-                          load_contact_allowlist,
-                          privacy_findings_in_file)
+from corpus_paths import child, corpus_root, is_reparse_point, register_id, reject_symlinks
+from pii_patterns import (
+    has_private_person_registration_pair,
+    load_contact_allowlist,
+    privacy_findings_in_file,
+)
 
 DIST = child(corpus_root(__file__), "dist")
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -181,12 +185,12 @@ def verify_distribution(distribution=None, contact_allowlist=None):
             continue
         try:
             with open(p, encoding="utf-8") as f:
-                for l in f:
-                    if not l.strip():
+                for line in f:
+                    if not line.strip():
                         continue
                     rows += 1
                     try:
-                        r = json.loads(l)
+                        r = json.loads(line)
                         if not isinstance(r, dict):
                             raise ValueError("JSONL row must be an object")
                         t = r.get("text") or ""
@@ -290,11 +294,11 @@ def verify_distribution(distribution=None, contact_allowlist=None):
 
     rt, rates_bad = [], 0
     with open(child(dist_root, "rates", "rates.jsonl"), encoding="utf-8") as f:
-        for l in f:
-            if not l.strip():
+        for line in f:
+            if not line.strip():
                 continue
             try:
-                record = json.loads(l)
+                record = json.loads(line)
                 if (not isinstance(record, dict)
                         or not isinstance(record.get("register_id"), str)):
                     raise ValueError("rates row must identify a title")
