@@ -30,7 +30,12 @@ dev = [
 tax-radar-au = "tax_radar_au.cli:main"
 
 [tool.setuptools]
-packages = ["tax_radar_au"]
+# The distribution name stays tax-radar-au: nothing consumes it on PyPI, and
+# the wheel, CLI and existing release assets keep their identity. fadden joins
+# it so `python -m fadden` resolves after `pip install -e .` instead of only
+# from inside the clone. Its stage data (manifest_md.json, the title lists)
+# stays out: the builder reads and writes beside its own modules in a checkout.
+packages = ["tax_radar_au", "fadden"]
 include-package-data = false
 
 [tool.setuptools.package-data]

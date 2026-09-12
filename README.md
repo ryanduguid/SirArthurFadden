@@ -4,7 +4,7 @@ Synthetic example. This is a finding aid derived from the Register's EPUB readin
 
 **Input:** the fabricated [source index](tests/corpus/fixtures/publication/sample-sources.json) and [reviewed observation facts](tests/corpus/fixtures/publication/sample-observation-facts-v3.json).
 
-From a source clone, install: `python -m pip install -e .`
+From a source clone, install: `python -m pip install -e .`. That puts both `python -m fadden` and the `tax-radar-au` command on the path. The builder still reads and writes beside its own stage modules, so run its stages from the checkout.
 
 ```bash
 python -m fadden export_monitor_contract -- tests/corpus/fixtures/publication/sample-sources.json tests/corpus/fixtures/publication/sample-observation-facts-v3.json --out ../synthetic-monitor-example
