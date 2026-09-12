@@ -8,13 +8,11 @@ from pathlib import Path
 
 import pyperf
 
-
 REPOSITORY = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPOSITORY))
 sys.path.insert(0, str(REPOSITORY / "fadden"))
 
 from fadden.extract import to_markdown  # noqa: E402
-
 
 SECTION_COUNT = 2_000
 EXPECTED_TABLE_COUNT = 100

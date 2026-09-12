@@ -49,8 +49,8 @@ python -m unittest discover -s tests/corpus -t . -v
 uv run --locked --extra dev pytest tests
 uv run --locked --extra dev pytest tests/radar tests/corpus/test_live_evidence_bundle_export.py
 uv run --locked --extra dev --python 3.12 python -m build
-uv run --locked --extra dev ruff check tax_radar_au tests
-uv run --locked --extra dev mypy tax_radar_au
+uv run --locked --extra dev ruff check .
+uv run --locked --extra dev mypy
 ```
 
 ## Package build and installed-wheel smoke

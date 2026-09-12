@@ -19,15 +19,17 @@ would preserve nothing and risk missing a name.
 Everything dropped is listed in REMOVED.md with its Register link, so the
 omission is visible and reversible from the primary source.
 """
-import collections, json, os, re, shutil, uuid
+import collections
+import json
+import os
+import re
+import shutil
+import uuid
 
-from corpus_paths import (child, corpus_root, is_reparse_point, register_id,
-                          reject_symlinks)
-from dist_verify import (_expected_title_files,
-                         _title_tree as _verifier_title_tree,
-                         verify_distribution)
-from pii_patterns import (load_contact_allowlist,
-                          privacy_findings_in_file)
+from corpus_paths import child, corpus_root, is_reparse_point, register_id, reject_symlinks
+from dist_verify import _expected_title_files, verify_distribution
+from dist_verify import _title_tree as _verifier_title_tree
+from pii_patterns import load_contact_allowlist, privacy_findings_in_file
 
 ROOT = corpus_root(__file__)
 DIST = child(ROOT, "dist")
@@ -427,10 +429,10 @@ def _build_distribution(staging):
             )
         copied_sections = child(staging, "markdown", rid, "sections.jsonl")
         with open(copied_sections, encoding="utf-8") as f:
-            for l in f:
-                if not l.strip():
+            for line in f:
+                if not line.strip():
                     continue
-                row = json.loads(l)
+                row = json.loads(line)
                 text = row.get("text") or ""
                 coll = row.get("collection") or title.get("collection") or "unknown"
                 kept_rows += 1
@@ -448,10 +450,10 @@ def _build_distribution(staging):
     rin = child(ROOT, "rates", "rates.jsonl")
     rate_records, rdropped = [], 0
     with open(rin, encoding="utf-8") as f:
-        for l in f:
-            if not l.strip():
+        for line in f:
+            if not line.strip():
                 continue
-            record = json.loads(l)
+            record = json.loads(line)
             if record["register_id"] in drop:
                 rdropped += 1
                 continue

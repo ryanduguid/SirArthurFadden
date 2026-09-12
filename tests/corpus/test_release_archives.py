@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from pathlib import Path
 import os
 import subprocess
 import sys
 import tempfile
 import unittest
-
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 POLICY_REF = "ryanduguid/release-policy/.github/workflows/release-archive.yml@"

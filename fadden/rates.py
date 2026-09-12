@@ -8,7 +8,11 @@ Every record cites its Act, compilation and section so the number can be
 checked against the provision. This is a finding aid, not a substitute for
 reading the law.
 """
-import json, os, re, glob, collections
+import collections
+import glob
+import json
+import os
+import re
 
 from corpus_paths import child, corpus_root, register_id
 
@@ -204,7 +208,7 @@ def is_rate_table(lines):
 
 
 def sentences(text):
-    plain = "\n".join(l for l in text.split("\n") if not l.startswith("|"))
+    plain = "\n".join(line for line in text.split("\n") if not line.startswith("|"))
     pieces, start, index = [], 0, 0
     while index < len(plain):
         char = plain[index]

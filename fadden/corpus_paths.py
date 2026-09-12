@@ -17,7 +17,6 @@ import stat
 from pathlib import Path
 from typing import Any, Union
 
-
 _REGISTER_ID = re.compile(r"[A-Z]\d{4}[A-Z]\d{5}\Z")
 PathPart = Union[str, os.PathLike[str]]
 

@@ -9,8 +9,8 @@ from typing import Any
 from urllib.parse import urlsplit
 
 from .errors import MonitorError
+from .persist import write_queue_files
 from .util import SourceSnapshot, load_json, load_json_exact, safe_markdown, sha256_json
-
 
 OBSERVATION_STATES = {
     "UNCHANGED",
@@ -679,9 +679,6 @@ def render_markdown(queue: dict[str, Any]) -> str:
             lines.append(f"- Limitation: {safe_markdown(limitation)}")
         lines.append("")
     return "\n".join(lines)
-
-
-from .persist import write_queue_files
 
 
 def write_queue(queue: dict[str, Any], output_dir: Path) -> dict[str, Path]:

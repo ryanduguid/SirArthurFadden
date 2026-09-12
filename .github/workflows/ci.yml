@@ -109,5 +109,8 @@ jobs:
         with:
           version: "0.12.0"
           enable-cache: true
-      - run: uv run --locked --extra dev ruff check tax_radar_au tests
-      - run: uv run --locked --extra dev mypy tax_radar_au
+      # Both cover the whole repository: fadden is 8,402 lines that neither
+      # tool used to see. Paths and packages come from pyproject, so there is
+      # one list to keep in step rather than two.
+      - run: uv run --locked --extra dev ruff check .
+      - run: uv run --locked --extra dev mypy

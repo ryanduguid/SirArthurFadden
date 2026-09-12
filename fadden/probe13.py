@@ -1,7 +1,10 @@
 """Probe the Register's version history for every title download.py recorded
 as no_epub, and write probe13.json so retry13.py can recover the ones that
 have an older published compilation."""
-import json, os, time, urllib.parse
+import json
+import os
+import time
+import urllib.parse
 
 from http_fetch import fetch_json
 

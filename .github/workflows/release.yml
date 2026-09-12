@@ -14,6 +14,13 @@ concurrency:
 
 jobs:
   release:
+    # No timeout-minutes here, unlike the sibling workflows. A job that calls a
+    # reusable workflow with `uses` accepts only name, uses, with, secrets,
+    # needs, if, permissions, strategy and concurrency; timeout-minutes on this
+    # job fails workflow validation and would break every release. The bound
+    # lives where the work does: both jobs in the pinned release-policy
+    # workflow, consumer-tests and the publish-archives call it needs, set
+    # timeout-minutes: 15, the same cap verify.yml uses.
     permissions:
       attestations: write # Record provenance and SBOM attestations for release assets.
       contents: write # Create the draft release, upload assets and publish it.

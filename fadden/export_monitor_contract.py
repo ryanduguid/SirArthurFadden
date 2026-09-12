@@ -464,7 +464,8 @@ class _OutputDirectoryLock:
             self._token = token
             return self
 
-    def __exit__(self, exc_type: object, exc: object, traceback: object) -> bool:
+    def __exit__(self, exc_type: object, exc: object, traceback: object) -> None:
+        # Returning None never suppresses the exception, as the explicit False did.
         try:
             if (
                 not self._recovery_required
@@ -474,7 +475,6 @@ class _OutputDirectoryLock:
                 _remove(self.path)
         except OSError:
             pass
-        return False
 
 
 def _publish(staged: dict[str, Path], destinations: dict[str, Path]) -> None:
@@ -500,15 +500,16 @@ def _publish(staged: dict[str, Path], destinations: dict[str, Path]) -> None:
                 for name in reversed(promoted):
                     try:
                         _remove(destinations[name])
-                        if backups[name] is not None:
-                            os.replace(backups[name], destinations[name])
+                        previous = backups[name]
+                        if previous is not None:
+                            os.replace(previous, destinations[name])
                             backups[name] = None
                     except BaseException as rollback_error:
                         rollback_errors.append(rollback_error)
-                for name, backup in backups.items():
-                    if name not in promoted and backup is not None:
+                for name, unpromoted in backups.items():
+                    if name not in promoted and unpromoted is not None:
                         try:
-                            os.replace(backup, destinations[name])
+                            os.replace(unpromoted, destinations[name])
                             backups[name] = None
                         except BaseException as rollback_error:
                             rollback_errors.append(rollback_error)
@@ -521,8 +522,8 @@ def _publish(staged: dict[str, Path], destinations: dict[str, Path]) -> None:
                 raise
             finally:
                 if not recovery_required:
-                    for backup in backups.values():
-                        _remove(backup)
+                    for remaining in backups.values():
+                        _remove(remaining)
     finally:
         for path in staged.values():
             _remove(path)

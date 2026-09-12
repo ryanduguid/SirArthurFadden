@@ -10,7 +10,6 @@ import importlib.util
 import io
 import json
 import os
-from pathlib import Path
 import re
 import shutil
 import sys
@@ -19,8 +18,8 @@ import time
 import unittest
 import warnings
 import zipfile
+from pathlib import Path
 from unittest import mock
-
 
 REPO = Path(__file__).resolve().parents[2]
 STAGE = REPO / "fadden"
@@ -318,8 +317,9 @@ class ExtractPipelineTests(unittest.TestCase):
 
     def _outputs(self, tmp_path):
         folder = tmp_path / "markdown" / self.REGISTER_ID
-        rows = [json.loads(l) for l in
-                (folder / "sections.jsonl").read_text(encoding="utf-8").splitlines() if l.strip()]
+        rows = [json.loads(line) for line in
+                (folder / "sections.jsonl").read_text(encoding="utf-8").splitlines()
+                if line.strip()]
         return (folder / ("%s.md" % self.REGISTER_ID)).read_text(encoding="utf-8"), rows
 
     def test_a_schedule_volume_reaches_the_markdown_and_the_jsonl(self):
@@ -2250,7 +2250,7 @@ class DistributionTests(unittest.TestCase):
         return result.exception.code, buffer.getvalue()
 
     def _status(self, output, label):
-        lines = [l for l in output.splitlines() if l.strip().startswith(label)]
+        lines = [line for line in output.splitlines() if line.strip().startswith(label)]
         self.assertEqual(len(lines), 1, output)
         return lines[0].strip()[len(label):].split()[0]
 
@@ -3183,9 +3183,9 @@ class BareModeFallbackTests(unittest.TestCase):
             extract = load_module("extract_bare_fallback", build / "extract.py")
             with contextlib.redirect_stdout(io.StringIO()):
                 extract.main(None)
-            rows = [json.loads(l) for l in
+            rows = [json.loads(line) for line in
                     (tmp_path / "markdown" / self.REGISTER_ID / "sections.jsonl")
-                    .read_text(encoding="utf-8").splitlines() if l.strip()]
+                    .read_text(encoding="utf-8").splitlines() if line.strip()]
 
             self.assertNotEqual([r["granularity"] for r in rows], ["whole_act"],
                                 "the bare pass found sections; do not ship one blob")

@@ -13,11 +13,10 @@ import stat
 import sys
 import tempfile
 import uuid
+from ctypes import wintypes
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Sequence
-
-from ctypes import wintypes
+from typing import IO, Any, Sequence
 
 from .capture_register import (
     ODATA_CONTEXT,
@@ -27,14 +26,15 @@ from .capture_register import (
     validate_capture_graph,
 )
 from .corpus_paths import (
-    _DuplicateJsonMemberError,
     _absolute,
     _details_are_reparse_point,
+    _DuplicateJsonMemberError,
     _path_is_junction,
     _reject_duplicate_json_members,
+)
+from .corpus_paths import (
     register_id as _validate_register_id,
 )
-
 
 _SHA256_ID = re.compile(r"sha256:[0-9a-f]{64}\Z")
 _SEMVER = re.compile(
@@ -320,8 +320,8 @@ class _PinnedDirectoryChain:
             )
         except OSError as exc:
             raise LiveEvidenceBundleError(f"{label} could not be pinned.") from exc
-        details = os.fstat(handle)
-        if not stat.S_ISDIR(details.st_mode):
+        posix_details = os.fstat(handle)
+        if not stat.S_ISDIR(posix_details.st_mode):
             os.close(handle)
             raise LiveEvidenceBundleError(f"{label} must be an ordinary directory.")
         self._handles.append(handle)
@@ -454,7 +454,7 @@ def _open_pinned_child(
         _FILE_SHARE_READ | _FILE_SHARE_WRITE,
         options | _FILE_SYNCHRONOUS_IO_NONALERT | _FILE_FLAG_OPEN_REPARSE_POINT,
     )
-    if result != 0:
+    if result != 0 or handle.value is None:
         raise LiveEvidenceBundleError("capture snapshot source file could not be opened.")
     return int(handle.value)
 
@@ -474,8 +474,8 @@ def _copy_regular_file(
         expected = _ordinary_file_details(source_path, directory_handle=directory_handle)
     try:
         if os.name == "nt" and directory_handle is None:
-            source = open(source_path, "rb")
-        elif os.name == "nt":
+            source: IO[bytes] = open(source_path, "rb")
+        elif os.name == "nt" and directory_handle is not None:
             import msvcrt
 
             source = os.fdopen(

@@ -20,7 +20,7 @@ python -m fadden probe13       # -> fadden/probe13.json      (only if download r
 python -m fadden retry13       # -> fadden/retry13_patch.json; patches manifest_raw.json in place
 python -m fadden extract       # -> ./corpus/markdown/**, fadden/manifest_md.json
 python -m fadden pii_scan      # -> fadden/pii_flagged.json   (mandatory; finalize refuses without it)
-python -m fadden pii_scan2     # -> refines fadden/pii_flagged.json
+python -m fadden pii_scan2     # reads fadden/pii_flagged.json to skip the known titles; reports only, writes nothing
 python -m fadden finalize      # -> ./corpus/sources.json, INDEX.md, README.md, LICENCE-NOTICE.md
 python -m fadden rates         # -> ./corpus/rates/rates.jsonl, RATES.md
 python -m fadden capture_register -- fadden/manifest_md.json --out build/register-capture-20260829

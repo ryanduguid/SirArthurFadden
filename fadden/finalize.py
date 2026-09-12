@@ -1,6 +1,10 @@
 """Stage 5: write sources.json, INDEX.md, README.md, LICENCE-NOTICE.md and the
 staleness checker."""
-import json, os, re, shutil, datetime
+import datetime
+import json
+import os
+import re
+import shutil
 from typing import NamedTuple
 
 from corpus_paths import child, corpus_root, register_id

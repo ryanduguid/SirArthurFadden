@@ -7,13 +7,20 @@ import json
 from pathlib import Path
 
 import pytest
-
 import tax_radar_au.monitor as monitor_module
 import tax_radar_au.persist as persist_module
 from tax_radar_au.errors import MonitorError
-from tax_radar_au.monitor import _https_url, _iso_date, _iso_timestamp, _load_observation, compare, render_markdown, validate_review, write_queue
+from tax_radar_au.monitor import (
+    _https_url,
+    _iso_date,
+    _iso_timestamp,
+    _load_observation,
+    compare,
+    render_markdown,
+    validate_review,
+    write_queue,
+)
 from tax_radar_au.util import SourceSnapshot, sample_path, sha256_json
-
 
 ROOT = Path(__file__).resolve().parents[2]
 

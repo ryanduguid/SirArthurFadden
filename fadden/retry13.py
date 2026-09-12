@@ -11,7 +11,9 @@ The recovery is to fall back to the most recent version that does have a
 Silently substituting an older compilation would misreport the corpus as
 current.
 """
-import json, os, time
+import json
+import os
+import time
 
 import download as dl
 from corpus_paths import child, corpus_root, register_id

@@ -11,7 +11,11 @@ version comes back, this asks again without the isCurrent filter: versions but
 none current means the title has fallen out of force, nothing at all means the
 lookup failed. Reporting both as one number hid a repeal behind a network error.
 """
-import json, os, sys, time, urllib.parse
+import json
+import os
+import sys
+import time
+import urllib.parse
 
 from corpus_paths import child, corpus_root
 from http_fetch import fetch_json

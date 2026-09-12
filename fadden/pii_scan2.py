@@ -19,8 +19,11 @@ import os
 import sys
 
 from corpus_paths import child, corpus_root, register_id
-from pii_patterns import (contact_fingerprints, load_contact_allowlist,
-                          private_person_registration_details)
+from pii_patterns import (
+    contact_fingerprints,
+    load_contact_allowlist,
+    private_person_registration_details,
+)
 
 ROOT = corpus_root(__file__)
 with open(os.path.join(os.path.dirname(os.path.abspath(__file__)),

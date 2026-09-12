@@ -6,14 +6,13 @@ import copy
 import hashlib
 import json
 import os
-from pathlib import Path
 import tempfile
 import unittest
+from pathlib import Path
 from unittest import mock
 
 from fadden import export_monitor_contract as monitor_contract
 from fadden import export_publication_bundles as exporter
-
 
 FIXTURES = Path(__file__).parent / "fixtures" / "publication"
 SOURCES = FIXTURES / "sample-sources.json"
@@ -100,6 +99,7 @@ class PublicationBundleExportTests(unittest.TestCase):
         before = hashlib.sha256(fixture.read_bytes()).hexdigest()
 
         from fadden.export_live_evidence_bundles import export_live_evidence_bundles
+
         from tests.corpus.test_live_evidence_bundle_export import (
             LiveEvidenceBundleContractTests,
         )
