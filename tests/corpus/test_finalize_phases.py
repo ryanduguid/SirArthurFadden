@@ -150,6 +150,17 @@ class FinalizePhaseTests(unittest.TestCase):
         raw, markdown = self.finalize.load_retrieval_inventory(self.scratch)
         return self.finalize.assemble_corpus_inventory(raw, markdown, self.root)
 
+    def test_missing_pii_summary_leaves_publication_files_unchanged(self):
+        self.finalize.SCRATCH = str(self.scratch)
+        self.finalize.ROOT = str(self.root)
+        (self.scratch / "pii_flagged.json").unlink()
+        for name in OUTPUT_HASHES:
+            (self.root / name).write_text("previous\n", encoding="utf-8")
+        with self.assertRaisesRegex(RuntimeError, "pii_flagged.json"):
+            self.finalize.main("2026-08-04")
+        for name in OUTPUT_HASHES:
+            self.assertEqual((self.root / name).read_text(encoding="utf-8"), "previous\n")
+
     def test_retrieval_inventory_and_assembly_are_direct_exact_phases(self) -> None:
         raw, markdown = self.finalize.load_retrieval_inventory(self.scratch)
         self.assertEqual([entry["id"] for entry in raw], [

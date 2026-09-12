@@ -248,7 +248,7 @@ def _workflow_smoke_contract() -> tuple[tuple[str, ...], ...]:
         str(venv_path / "bin" / "pip"): "<python> -m pip",
         str(venv_path / "bin" / "tax-radar-au"): "<cli>",
     }
-    normalised = [f"python -m venv <venv>", commands[1], "outside-checkout", *commands[4:]]
+    normalised = ["python -m venv <venv>", commands[1], "outside-checkout", *commands[4:]]
     for old, new in substitutions.items():
         normalised = [command.replace(old, new) for command in normalised]
     return tuple(

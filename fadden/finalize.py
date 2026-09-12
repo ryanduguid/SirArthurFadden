@@ -509,7 +509,7 @@ survives a nested paragraph.
         notcurrent=len([a for a in ok if a.get("version_is_current") is False]))
 
 
-def finish_corpus_publication(inventory, retrieved):
+def finish_corpus_publication(inventory, retrieved, pii_counts=None):
     """Write the README, deploy support scripts and report final counts."""
     missing = inventory.missing
     ok = inventory.titles
@@ -520,7 +520,7 @@ def finish_corpus_publication(inventory, retrieved):
     n_act = inventory.acts
     n_inst = inventory.instruments
 
-    pii_titles, pii_names = pii_summary()
+    pii_titles, pii_names = pii_summary() if pii_counts is None else pii_counts
     with open(child(ROOT, "README.md"), "w", encoding="utf-8") as f:
         f.write(build_readme_document(
             inventory, retrieved, pii_titles=pii_titles, pii_names=pii_names))
@@ -551,6 +551,7 @@ def finish_corpus_publication(inventory, retrieved):
 
 
 def main(retrieved):
+    pii_counts = pii_summary()
     raw, markdown = load_retrieval_inventory(SCRATCH)
     inventory = assemble_corpus_inventory(raw, markdown, ROOT)
 
@@ -564,7 +565,7 @@ def main(retrieved):
     with open(child(ROOT, "LICENCE-NOTICE.md"), "w", encoding="utf-8") as f:
         f.write(build_licence_notice(retrieved))
 
-    finish_corpus_publication(inventory, retrieved)
+    finish_corpus_publication(inventory, retrieved, pii_counts)
 
 
 if __name__ == "__main__":

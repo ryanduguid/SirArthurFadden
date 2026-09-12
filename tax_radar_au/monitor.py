@@ -647,6 +647,7 @@ def render_markdown(queue: dict[str, Any]) -> str:
         "# AU Tax Change Impact Queue",
         "",
         f"**Run status: {queue['run_status']}**",
+        f"Queue digest: `{queue['queue_digest']}`",
         "",
         "This is a synthetic metadata-review queue. It does not establish current law, legal effect, tax advice, a workflow update, or a client action.",
         "",
@@ -996,6 +997,14 @@ def validate_review(*, queue_path: Path, decision_path: Path) -> dict[str, Any]:
         )
         seen.add(item_id)
     undecided_count = len(open_items - seen)
+    markdown_path = queue_path.with_suffix(".md")
+    if markdown_path.exists():
+        try:
+            markdown = markdown_path.read_text(encoding="utf-8")
+        except (OSError, UnicodeError) as exc:
+            raise MonitorError("Queue Markdown could not be read; regenerate the pair.") from exc
+        if markdown != render_markdown(queue):
+            raise MonitorError("Queue Markdown does not match the JSON evidence; regenerate the pair.")
     status = (
         "DECISION_RECORDED"
         if undecided_count == 0

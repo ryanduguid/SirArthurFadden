@@ -1,4 +1,4 @@
-"""Atomic write of the impact-queue pair, with output-path containment."""
+"""Staged queue writes with rollback; readers detect interrupted generations."""
 from __future__ import annotations
 
 import os
@@ -103,5 +103,4 @@ def write_queue_files(json_text: str, markdown_text: str, output_dir: Path) -> d
         if parked is not None:
             _remove_quietly(parked)
     return {"json": json_path, "markdown": markdown_path}
-
 
