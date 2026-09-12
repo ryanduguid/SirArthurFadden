@@ -1,3 +1,12 @@
+# v0.1.6
+
+This candidate contains the corpus builder source. It excludes generated legislation and live evidence.
+
+- Display the full queue digest and reject Markdown companions that differ from the JSON rendering.
+- Record per-title EPUB metadata failures before refusing manifest publication.
+- Validate the required PII summary before replacing publication artefacts.
+- This release contains builder source only, without a corpus or live evidence.
+
 # v0.1.5
 
 This is a release of the corpus builder, not a prebuilt legislation corpus.
