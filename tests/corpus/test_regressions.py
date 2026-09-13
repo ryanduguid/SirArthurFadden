@@ -1736,15 +1736,13 @@ class DocumentedCommandTests(unittest.TestCase):
     """The commands and module paths the repository's own documents hand a
     reader.  Each one here was wrong on an unmodified checkout."""
 
-    def test_the_documented_verification_command_is_the_one_verify_runs(self):
+    def test_the_documented_verification_command_scopes_discovery_to_the_corpus(self):
         """CONTRIBUTING.md promises a standard-library-only run and then
         discovered from `tests`, which errors on the two radar modules that
         import pytest, so the file's only verification instruction was red on a
-        clean clone.  verify.yml already scopes discovery to the corpus half."""
+        clean clone.  The command must scope discovery to the corpus half."""
         contributing = (REPO / "CONTRIBUTING.md").read_text(encoding="utf-8")
-        verify = (REPO / ".github" / "workflows" / "verify.yml").read_text(encoding="utf-8")
         command = "python -m unittest discover -s tests/corpus -t . -v"
-        self.assertIn(command, verify)
         self.assertIn(command, contributing)
         self.assertNotIn("unittest discover -s tests -v", contributing)
 

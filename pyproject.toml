@@ -24,7 +24,7 @@ Issues = "https://github.com/ryanduguid/au-tax-legislation-corpus/issues"
 
 [project.optional-dependencies]
 dev = [
-    "ruff>=0.11", "mypy>=1.14", "build>=1.2", "pytest>=8", "pyperf==2.10.0"]
+    "ruff>=0.11", "mypy>=1.14", "build>=1.2", "pytest>=8"]
 
 [project.scripts]
 tax-radar-au = "tax_radar_au.cli:main"

@@ -33,8 +33,8 @@ Register captures and publication candidates as different contracts.
 
 ## CI gates
 
-`verify.yml` runs compilation and the corpus unittest suite on Ubuntu. `ci.yml` runs the
-full locked pytest suite on Ubuntu for Python 3.10-3.13. Its Windows 3.12 matrix runs
+`ci.yml` runs the full locked pytest suite on Ubuntu for Python 3.10-3.13, then the
+package build and the linters. Its Windows 3.12 matrix runs
 `tests/radar` and `tests/corpus/test_live_evidence_bundle_export.py` so the supported
 live-evidence export boundary is exercised. Other corpus modules remain excluded because
 of pre-existing Windows failures around 8.3 short paths, junctions and reparse points;
@@ -44,8 +44,6 @@ without proving it.
 The fenced list records the unique single-line commands. The multiline package-smoke gate
 is explained and matched semantically below without duplicating its shell body.
 ```bash
-python -m compileall -q .
-python -m unittest discover -s tests/corpus -t . -v
 uv run --locked --extra dev pytest tests
 uv run --locked --extra dev pytest tests/radar tests/corpus/test_live_evidence_bundle_export.py
 uv run --locked --extra dev --python 3.12 python -m build
