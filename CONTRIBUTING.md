@@ -23,7 +23,7 @@ python -m compileall -q .
 python -m unittest discover -s tests/corpus -t . -v
 ```
 
-That is the command `.github/workflows/verify.yml` runs. Discovery is scoped to `tests/corpus` because the radar half under `tests/radar` imports pytest, which is not in the standard library. `ci.yml` runs both halves as `uv run --locked --extra dev pytest`.
+Discovery is scoped to `tests/corpus` because the radar half under `tests/radar` imports pytest, which is not in the standard library. CI runs both halves as `uv run --locked --extra dev pytest` in `.github/workflows/ci.yml`.
 
 The suite carries regression tests tied to specific past defects. Do not relax one to make a change pass. Each assertion records something that went wrong here.
 

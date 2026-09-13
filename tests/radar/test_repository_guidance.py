@@ -42,8 +42,8 @@ EXPECTED_MAP = """\
 """
 
 EXPECTED_PLATFORM_NOTE = """\
-`verify.yml` runs compilation and the corpus unittest suite on Ubuntu. `ci.yml` runs the
-full locked pytest suite on Ubuntu for Python 3.10-3.13. Its Windows 3.12 matrix runs
+`ci.yml` runs the full locked pytest suite on Ubuntu for Python 3.10-3.13, then the
+package build and the linters. Its Windows 3.12 matrix runs
 `tests/radar` and `tests/corpus/test_live_evidence_bundle_export.py` so the supported
 live-evidence export boundary is exercised. Other corpus modules remain excluded because
 of pre-existing Windows failures around 8.3 short paths, junctions and reparse points;
@@ -167,7 +167,7 @@ def _workflow_commands() -> list[str]:
     return _workflow_commands_from(
         tuple(
             (ROOT / ".github" / "workflows" / name).read_text(encoding="utf-8")
-            for name in ("verify.yml", "ci.yml")
+            for name in ("ci.yml",)
         )
     )
 
@@ -175,7 +175,7 @@ def _workflow_commands() -> list[str]:
 def _workflow_multiline_gates() -> list[str]:
     return [
         command
-        for name in ("verify.yml", "ci.yml")
+        for name in ("ci.yml",)
         for multiline, command in _workflow_run_gates(
             (ROOT / ".github" / "workflows" / name).read_text(encoding="utf-8")
         )
@@ -353,14 +353,11 @@ steps:
 
 
 def test_workflow_commands_derive_every_matrix_test_target() -> None:
-    verify = (ROOT / ".github" / "workflows" / "verify.yml").read_text(
-        encoding="utf-8"
-    )
     ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
     ci = ci.replace('tests: ["tests"]', 'tests: ["tests", "tests/integration"]', 1)
 
     assert "uv run --locked --extra dev pytest tests/integration" in (
-        _workflow_commands_from((verify, ci))
+        _workflow_commands_from((ci,))
     )
 
 

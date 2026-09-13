@@ -1,11 +1,11 @@
 # Corpus extraction performance baseline
 
-This benchmark measures the production `to_markdown` path against two fabricated volumes containing 2,000 numbered sections, prose and periodic tables. It uses `pyperf` 2.10.0 from the locked development environment so warm-ups, worker processes and timing metadata follow a maintained benchmark tool rather than a repository-specific timer.
+This benchmark measures the production `to_markdown` path against two fabricated volumes containing 2,000 numbered sections, prose and periodic tables. It uses `pyperf` 2.10.0 so warm-ups, worker processes and timing metadata follow a maintained benchmark tool rather than a repository-specific timer. Nothing in CI or the tests runs it, so `pyperf` is not part of the locked development environment; add it for the run.
 
 Run it from the repository root:
 
 ```bash
-uv run --locked --extra dev --python 3.12 python benchmarks/benchmark_extract.py --rigorous
+uv run --locked --extra dev --with pyperf==2.10.0 --python 3.12 python benchmarks/benchmark_extract.py --rigorous
 ```
 
 This is measurement-only. No duration or variance threshold is part of tests or CI. A threshold should be proposed only after repeated runs on a stable runner establish normal dispersion and the pull request records the raw results.
